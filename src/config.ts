@@ -37,6 +37,8 @@ export const SITE = {
 	// Optional, user/author settings (example)
 	// Author: name
 	author: "Quoc Bui", // Example: Fred K. Schott
+	// Author: Facebook handler
+	authorFacebook: "bviquoc", // Example: FredKSchott
 	// Author: Twitter handler
 	authorTwitter: "", // Example: FredKSchott
 	// Author: Image external source
