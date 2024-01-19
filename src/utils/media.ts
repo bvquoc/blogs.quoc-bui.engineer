@@ -12,4 +12,4 @@ export type MediaExternallyHostedVideo = {
 };
 
 export const DEFAULT_MEDIA_URL: GithubContentURL =
-	"https://api.github.com/repos/one-aalam/astro-ink/contents/src/data/astro-media.json";
+	"https://api.github.com/repos/bvquoc/blog.quoc-bui.engineer/contents/src/data/astro-media.json";

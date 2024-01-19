@@ -33,14 +33,14 @@ export const SITE = {
 	image:
 		"https://raw.githubusercontent.com/one-aalam/astro-ink/main/public/astro-banner.png",
 	// YT video channel Id (used in media.astro)
-	ytChannelId: "",
+	ytChannelId: "",//"UCgjGjcDDV7Qz-JrCtN19O5Q",
 	// Optional, user/author settings (example)
 	// Author: name
 	author: "Quoc Bui", // Example: Fred K. Schott
 	// Author: Twitter handler
 	authorTwitter: "", // Example: FredKSchott
 	// Author: Image external source
-	authorImage: "", // Example: https://pbs.twimg.com/profile_images/1272979356529221632/sxvncugt_400x400.jpg, https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png
+	authorImage: "/avatar.png", // Example: https://pbs.twimg.com/profile_images/1272979356529221632/sxvncugt_400x400.jpg, https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png
 	// Author: Bio
 	authorBio: "a software engineer who loves to learn and share knowledge.",
 };
