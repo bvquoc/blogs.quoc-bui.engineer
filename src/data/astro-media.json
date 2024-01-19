@@ -1,10 +1,10 @@
 [
 	{
-		"title": "Ship Less JavaScript with Astro",
-		"description": "Astro is a way to build websites that ships zero JavaScript by default. Only add JS when you need it for maximum performance! Fred K. Schott will teach us how it works.",
-		"url": "https://youtu.be/z15YLsLMtu4?list=PLz8Iz-Fnk_eTpvd49Sa77NiF8Uqq5Iykx",
-		"host": "Jason Lengstorf",
-		"participants": ["Fred K. Schott"],
-		"date": "2021-05-08"
+		"title": "Bui Vi Quoc Video Intro",
+		"description": "My video intro for my YouTube channel, made in 2016.",
+		"url": "https://youtu.be/t2PMuS0mbe8?si=WxE9l_8D3QVx-Nyc",
+		"host": "Bùi Vĩ Quốc",
+		"participants": ["Bùi Vĩ Quốc"],
+		"date": "2016-01-31"
 	}
 ]
