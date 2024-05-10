@@ -1,0 +1,134 @@
+---
+title: "Những điều bạn cần biết về index trong database (Phần 1)"
+date: "2024-05-10"
+image: https://media.licdn.com/dms/image/D5612AQGObW4f65d8Ig/article-cover_image-shrink_720_1280/0/1694263327065?e=1720656000&v=beta&t=V2Pq5MNUtfiQy0BuhdXtToEj30tQPLHgcOy7if6F9m8
+author: Quốc Bùi
+authorFacebook: "bviquoc"
+authorImage: /quocbui.jpg
+category: software-engineering
+tags:
+- software-engineering
+- database
+- index-in-database
+description: Chia sẻ về Index trong PostgreSQL
+---
+
+Xin chào cả nhà, ở bài viết này mình sẽ chia sẻ với mọi người về Index trong database, cụ thể hơn là PostgreSQL, các relational database khác cũng có cách hoạt động tương tự như vậy.
+Trong bài này **database** mình nhắc đến là relational database.
+
+## Đặt vấn đề
+
+Khi bạn làm việc với cơ sở dữ liệu, bạn sẽ thường xuyên nghe đến từ khóa Index. Vậy Index là gì? Index hoạt động như thế nào? Tại sao chúng ta cần Index? Và khi nào thì nên sử dụng Index?
+
+Hãy cùng mình tìm câu trả lời trong bài viết này nhé.
+
+## Index là gì?
+
+### Ví dụ:
+
+Tưởng tượng **Database** là 1 **cuốn sổ** lớn chứa thông tin của **nhân viên** trong công ty, mỗi nhân viên sẽ gồm các thông tin như: **tên**, **mức lương**, **phòng ban**,...
+
+```
+Danh sách nhân viên:
+    |_Thông tin toàn bộ nhân viên:
+        |_ Nhân viên 1
+        |_ Nhân viên 2
+        |_ Nhân viên ...
+```
+
+Giờ bạn cần tìm thông tin của nhân viên có tên là **"Quốc"** trong cuốn sổ đó, bạn sẽ làm như thế nào?
+Đơn giản là bạn sẽ bắt đầu từ trang đầu tiên của cuốn sổ và tìm kiếm từng trang một cho đến khi tìm thấy thông tin của nhân viên có tên là **"Quốc"**.
+
+Bạn cần tìm kiếm thông tin phức tạp hơn, như ở phòng ban **"Kỹ thuật"** có nhân viên nào có mức lương từ **$1000** đến **$2000**.
+Bạn cũng sẽ phải tìm kiếm từng trang một cho đến khi tìm thấy thông tin của nhân viên thỏa mãn, điều này cực kì khó khăn nếu số lượng nhân viên trong công ty lớn.
+
+Vậy chúng ta sẽ thực hiện một số thao tác để có thể truy xuất thông tin nhanh hơn.
+
+Đầu tiên chúng ta tạo thêm một chương mới, chương này sẽ chia danh sách nhân viên ra thành các phòng ban khác nhau, mỗi phòng ban sẽ tương ứng với 1 đầu mục nhỏ như sau:
+
+```
+Danh sách nhân viên:
+    |_Thông tin toàn bộ nhân viên:
+        |_ Nhân viên 1
+        |_ Nhân viên 2
+        |_ Nhân viên ...
+    |_Phòng ban:
+        |_ Kỹ thuật:
+            |_ Nhân viên 1
+            |_ Nhân viên 2
+            |_ Nhân viên ...
+        |_ Kinh doanh:
+            |_ Nhân viên 1
+            |_ Nhân viên 2
+            |_ Nhân viên ...
+        |_ Marketing:
+            |_ Nhân viên 1
+            |_ Nhân viên 2
+            |_ Nhân viên ...
+```
+
+Vậy lúc này, bạn chỉ cần mở mục **"Kỹ thuật"** và tìm kiếm thông tin của nhân viên có mức lương từ **$1000** đến **$2000**.
+
+Việc này giúp bạn tìm kiếm thông tin nhanh hơn rất nhiều so với việc tìm kiếm thông tin trong toàn bộ cuốn sổ, tuy nhiên bạn vẫn phải tìm tuần tự để chọn ra các nhân viên có mức lương từ **$1000** đến **$2000**.
+Vậy chúng ta sẽ đặt ra 1 rule mới, các nhân viên sẽ được sắp xếp theo mức lương từ thấp đến cao trong mỗi phòng ban, lúc này kết quả tìm kiếm sẽ nằm ở các dòng liên tiếp nhau trong sổ.
+
+Tuy nhiên, cách làm trên vẫn chưa phải là tối ưu, nó chỉ đáp ứng được một số bài toán cụ thể, việc sắp xếp nhân viên theo mức lương không phải là cách thông minh. Vì nếu mức lương của nhân viên thay đổi thì phải sắp xếp lại vị trí của nhân viên đó trong sổ, tương tự với việc thêm mới nhân viên vào phòng ban, điều này khiến cho người quản lí sổ phải làm việc nhiều hơn.
+
+Thực tế, cách làm trên cũng tương tự cách tạo và sử dụng **Index** trong cơ sở dữ liệu.
+
+### Kết luận
+
+Index là một cấu trúc dữ liệu giúp tăng tốc độ truy xuất dữ liệu từ cơ sở dữ liệu. Index giúp cơ sở dữ liệu tìm kiếm dữ liệu nhanh hơn bằng cách tạo ra một bản sao nhỏ của một phần hoặc toàn bộ dữ liệu trong bảng và sắp xếp nó theo một trường hoặc một nhóm trường.
+
+Nói đơn giản hơn là Index giúp cơ sở dữ liệu tìm kiếm dữ liệu nhanh hơn.
+
+## Lưu ý khi sử dụng Index
+
+### 1. Index không phải là bảng
+
+Như mình đã đề cập ở phần trước, Index không phải là bảng, nó chỉ là một cấu trúc dữ liệu giúp tăng tốc độ truy xuất dữ liệu từ bảng.
+
+Khi bạn tạo 1 Index trên 1 table dữ liệu đó sẽ được sao chép và sắp xếp theo trường hoặc nhóm trường mà bạn đã chọn. Index không chứa dữ liệu thực sự, nó chỉ tham chiếu đến vị trí dữ liệu thực sự trong bảng đó.
+
+Mục đích chính của index là giúp tối ưu hóa các truy vấn tìm kiếm, sắp xếp và truy xuất dữ liệu nhanh chóng hơn bằng cách giảm số lượng truy cập đĩa cần thiết để tìm kiếm thông tin.
+
+### 2. Index không phải là giải pháp cho mọi truy vấn
+
+Mặc dù index giúp tăng tốc độ truy vấn dữ liệu, chúng cũng có những hạn chế và chi phí đi kèm mà không phải lúc nào cũng lợi hại cho mọi tình huống.
+
+Trong thực tế database có thể không sử dụng index cho một số truy vấn vì:
+- **Lượng dữ liệu trả về lớn**: Nếu truy vấn cần truy xuất một phần lớn dữ liệu từ bảng, hệ thống có thể thấy rằng quét toàn bảng (**full table scan**) là hiệu quả hơn so với việc sử dụng index. Điều này xảy ra bởi vì việc sử dụng index đòi hỏi phải đọc index trước rồi mới đọc dữ liệu thực tế, có thể dẫn đến nhiều lần chuyển đổi ngẫu nhiên trên đĩa, làm chậm quá trình truy vấn.
+- **Loại truy vấn**: Index thường hữu ích cho các truy vấn tìm kiếm, lọc, hoặc sắp xếp dựa trên các cột đã được index. Tuy nhiên, đối với các truy vấn không liên quan đến các cột này, hoặc khi các điều kiện lọc không sử dụng index hiệu quả (ví dụ như sử dụng toán tử **LIKE** với wildcard ở đầu chuỗi), database có thể quyết định không sử dụng index.
+- **Mức độ phân tán của dữ liệu (Cardinality)**: Nếu cột được lập chỉ mục có nhiều giá trị trùng lặp (tức là có cardinality thấp), việc sử dụng index có thể không hiệu quả. Trong trường hợp này, database có thể thấy rằng việc quét toàn bảng để tìm tất cả các bản ghi phù hợp là nhanh hơn.
+- **Cấu hình truy vấn**: Các database hiện đại sử dụng trình tối ưu hóa truy vấn để quyết định kế hoạch thực hiện tốt nhất cho mỗi truy vấn dựa trên các thống kê về dữ liệu. Trong một số trường hợp, kế hoạch tối ưu có thể không bao gồm việc sử dụng index nếu database ước tính rằng kế hoạch khác sẽ nhanh hơn hoặc ít tốn kém hơn.
+
+### 3. Index không bảo đảm tốc độ truy xuất dữ liệu
+
+Trong quá trình làm việc với Index, có thể bạn sẽ thắc mắc là đã đánh Index cho bảng nhưng tại sao truy vấn vẫn chậm?
+
+Quay lại ví dụ ở đầu bài, ví dụ bạn tìm kiếm nhân viên có mức lương từ **$1000** đến **$2000** trong công ty (**không** phải trong phòng ban **"Kỹ thuật"**), lúc này bạn sẽ phải tìm kiếm từng trang một cho đến khi tìm thấy thông tin của nhân viên thỏa mãn.
+Vì vậy việc sắp sếp nhân viên theo mức lương trong phòng ban **"Kỹ thuật"** không giúp bạn tìm kiếm nhanh hơn.
+
+Tương tự, việc tạo Index cho một trường không phải lúc nào cũng giúp tăng tốc độ truy vấn, nó chỉ giúp tăng tốc độ truy vấn trong một số trường hợp cụ thể.
+
+Để tối ưu hóa việc sử dụng Index, bạn cần phải hiểu rõ về cấu trúc dữ liệu của bảng, cách hoạt động của Index và cách sử dụng Index trong các truy vấn cụ thể.
+
+### 5. Index is not free
+
+Mình nói **"Index is not free"** ám chỉ việc sử dụng Index cũng có một số hạn chế và chi phí đi kèm.
+
+Sau đây là một số vấn đề bạn phải cân nhắc khi sử dụng Index:
+
+- **Chi phí lưu trữ**: Mỗi index cần không gian lưu trữ trên đĩa hoặc trong bộ nhớ. Kích thước của index phụ thuộc vào số lượng và loại các cột được index, cũng như số lượng bản ghi trong bảng. Việc có nhiều index, đặc biệt là trên các bảng dữ liệu lớn, có thể yêu cầu một lượng đáng kể không gian lưu trữ. Cũng giống như ví dụ trên, bạn sẽ tốn nhiều trang sổ hơn để chia nhỏ dữ liệu ra thành các phòng ban.
+- **Chi phí bảo trì**: Mỗi khi có sự thay đổi trong bảng dữ liệu (thêm, xóa, cập nhật bản ghi), các index liên quan cũng cần được cập nhật để phản ánh những thay đổi đó. Việc này yêu cầu thời gian xử lý và tài nguyên hệ thống, làm chậm các hoạt động ghi và cập nhật dữ liệu.
+- **Chi phí hiệu suất**: Trong khi index có thể cải thiện hiệu suất đọc dữ liệu, chúng lại có thể làm giảm hiệu suất ghi do chi phí cập nhật index. Điều này đặc biệt quan trọng trong các ứng dụng có nhiều truy vấn cập nhật dữ liệu liên tục.
+- **Chi phí quản lý**: Quản lý index bao gồm việc theo dõi hiệu suất và hiệu quả của các index, điều chỉnh hoặc xóa các index không cần thiết, và tối ưu hóa index để phù hợp với các mẫu truy vấn. Việc quản lý này đòi hỏi sự hiểu biết kỹ thuật và thời gian từ phía nhân viên IT hoặc quản trị viên cơ sở dữ liệu.
+- **Chi phí thời gian**: Tạo và duy trì index có thể mất nhiều thời gian, đặc biệt khi đối mặt với lượng dữ liệu lớn. Trong một số trường hợp, việc xây dựng index có thể làm chậm việc triển khai hoặc cập nhật các tính năng mới trong cơ sở dữ liệu.
+
+## Kết luận
+
+Qua bài viết này, hy vọng các bạn có thể hình dung được index là gì, cách hoạt động và lưu ý khi sử dụng index trong cơ sở dữ liệu.
+
+Ở bài viết sau, chúng ta sẽ tìm hiểu sâu hơn về các loại index, cách hoạt động và cách sử dụng chúng trong PostgreSQL.
+
+Cảm ơn các bạn đã đọc bài viết, hẹn gặp lại ở bài viết sau.
